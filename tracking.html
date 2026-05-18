@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+
+    <title>Tracking DO</title>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app" class="container">
+
+    <h1>🚚 Tracking Delivery Order</h1>
+
+    <!-- FORM -->
+
+    <div class="form-box">
+
+        <h2>Tambah Delivery Order</h2>
+
+        <p>
+            Nomor DO:
+            <strong>{{ generatedDO }}</strong>
+        </p>
+
+        <input
+            type="text"
+            placeholder="NIM"
+            v-model="form.nim">
+
+        <input
+            type="text"
+            placeholder="Nama"
+            v-model="form.nama">
+
+        <select v-model="form.ekspedisi">
+
+            <option value="">
+                Pilih Ekspedisi
+            </option>
+
+            <option
+                v-for="e in pengirimanList"
+                :value="e.nama">
+
+                {{ e.nama }}
+            </option>
+
+        </select>
+
+        <select v-model="selectedPaket">
+
+            <option value="">
+                Pilih Paket
+            </option>
+
+            <option
+                v-for="p in paket"
+                :value="p.kode">
+
+                {{ p.kode }} - {{ p.nama }}
+            </option>
+
+        </select>
+
+        <!-- DETAIL PAKET -->
+
+        <div
+            v-if="paketDetail"
+            class="detail-box">
+
+            <h3>Isi Paket</h3>
+
+            <ul>
+
+                <li
+                    v-for="isi in paketDetail.isi">
+
+                    {{ isi }}
+                </li>
+
+            </ul>
+
+            <p>
+                Total Harga:
+                Rp {{ paketDetail.harga.toLocaleString() }}
+            </p>
+
+        </div>
+
+        <input
+            type="date"
+            v-model="form.tanggalKirim">
+
+        <button @click="addTracking">
+            Simpan DO
+        </button>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>No DO</th>
+                <th>NIM</th>
+                <th>Nama</th>
+                <th>Ekspedisi</th>
+                <th>Paket</th>
+                <th>Tanggal</th>
+                <th>Total</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <tr
+                v-for="(item,index) in deliveryOrders"
+                :key="index">
+
+                <td>{{ item.nomorDO }}</td>
+
+                <td>{{ item.nim }}</td>
+
+                <td>{{ item.nama }}</td>
+
+                <td>{{ item.ekspedisi }}</td>
+
+                <td>{{ item.paket }}</td>
+
+                <td>{{ item.tanggalKirim }}</td>
+
+                <td>
+                    Rp {{ item.total.toLocaleString() }}
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script src="js/dataBahanAjar.js"></script>
+<script src="js/tracking-app.js"></script>
+
+</body>
+</html>
