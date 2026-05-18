@@ -1,211 +1,495 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>RAKARA - Stok Bahan Ajar</title>
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="css/style.css">
+
 </head>
+
 <body>
 
-<div id="app" class="container">
+    <!-- APP DUMMY DOSEN -->
 
-    <h1>📚 Stok Bahan Ajar</h1>
+    <div id="app" style="display:none;"></div>
 
-    <!-- FILTER -->
+    <!-- APP UTAMA -->
 
-    <div class="filter-box">
+    <div id="mainApp" class="container">
 
-        <select v-model="selectedUPBJJ">
-            <option value="">Semua UPBJJ</option>
+        <h1>📚 Stok Bahan Ajar</h1>
 
-            <option
-                v-for="u in upbjjList"
-                :value="u">
+        <!-- FILTER -->
 
-                {{ u }}
-            </option>
-        </select>
+        <div class="filter-box">
 
-        <select
-            v-model="selectedKategori"
-            v-if="selectedUPBJJ">
+            <select v-model="selectedUPBJJ">
 
-            <option value="">Semua Kategori</option>
+                <option value="">
+                    Semua UPBJJ
+                </option>
 
-            <option
-                v-for="k in kategoriList"
-                :value="k">
+                <option
+                    v-for="u in upbjjList"
+                    :key="u"
+                    :value="u">
 
-                {{ k }}
-            </option>
-        </select>
+                    {{ u }}
 
-        <label>
-            <input type="checkbox" v-model="onlyWarning">
-            Tampilkan Warning
-        </label>
+                </option>
 
-        <select v-model="sortBy">
-            <option value="">Sort</option>
-            <option value="judul">Judul</option>
-            <option value="qty">Stok</option>
-            <option value="harga">Harga</option>
-        </select>
+            </select>
 
-        <button @click="resetFilter">
-            Reset
-        </button>
+            <select
+                v-if="selectedUPBJJ"
+                v-model="selectedKategori">
+
+                <option value="">
+                    Semua Kategori
+                </option>
+
+                <option
+                    v-for="k in kategoriList"
+                    :key="k"
+                    :value="k">
+
+                    {{ k }}
+
+                </option>
+
+            </select>
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    v-model="onlyWarning">
+
+                Warning Only
+
+            </label>
+
+            <select v-model="sortBy">
+
+                <option value="">
+                    Sort Data
+                </option>
+
+                <option value="judul">
+                    Judul
+                </option>
+
+                <option value="qty">
+                    Qty
+                </option>
+
+                <option value="harga">
+                    Harga
+                </option>
+
+            </select>
+
+            <button @click="resetFilter">
+
+                Reset
+
+            </button>
+
+        </div>
+
+        <!-- TABLE -->
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Kode</th>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>UPBJJ</th>
+                    <th>Rak</th>
+                    <th>Harga</th>
+                    <th>Qty</th>
+                    <th>Safety</th>
+                    <th>Status</th>
+                    <th>Catatan</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr
+                    v-for="(item,index) in filteredStok"
+                    :key="index">
+
+                    <td>{{ item.kode }}</td>
+
+                    <td v-text="item.judul"></td>
+
+                    <td>{{ item.kategori }}</td>
+
+                    <td>{{ item.upbjj }}</td>
+
+                    <td>{{ item.lokasiRak }}</td>
+
+                    <td>
+
+                        Rp {{ item.harga.toLocaleString() }}
+
+                    </td>
+
+                    <td>
+
+                        <input
+                            type="number"
+                            v-model="item.qty">
+
+                    </td>
+
+                    <td>{{ item.safety }}</td>
+
+                    <td>
+
+                        <span
+                            v-if="item.qty == 0"
+                            class="danger">
+
+                            ❌ Kosong
+
+                        </span>
+
+                        <span
+                            v-else-if="item.qty < item.safety"
+                            class="warning">
+
+                            ⚠ Menipis
+
+                        </span>
+
+                        <span
+                            v-else
+                            class="safe">
+
+                            ✅ Aman
+
+                        </span>
+
+                    </td>
+
+                    <td v-html="item.catatanHTML"></td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <!-- FORM -->
+
+        <div class="form-box">
+
+            <h2>➕ Tambah Bahan Ajar</h2>
+
+            <input
+                type="text"
+                placeholder="Kode"
+                v-model="form.kode">
+
+            <input
+                type="text"
+                placeholder="Judul"
+                v-model="form.judul">
+
+            <select v-model="form.kategori">
+
+                <option value="">
+                    Pilih Kategori
+                </option>
+
+                <option
+                    v-for="k in kategoriList"
+                    :key="k"
+                    :value="k">
+
+                    {{ k }}
+
+                </option>
+
+            </select>
+
+            <select v-model="form.upbjj">
+
+                <option value="">
+                    Pilih UPBJJ
+                </option>
+
+                <option
+                    v-for="u in upbjjList"
+                    :key="u"
+                    :value="u">
+
+                    {{ u }}
+
+                </option>
+
+            </select>
+
+            <input
+                type="number"
+                placeholder="Harga"
+                v-model="form.harga">
+
+            <input
+                type="number"
+                placeholder="Qty"
+                v-model="form.qty">
+
+            <input
+                type="number"
+                placeholder="Safety"
+                v-model="form.safety">
+
+            <button @click="addData">
+
+                Simpan Data
+
+            </button>
+
+        </div>
 
     </div>
 
-    <!-- TABLE -->
+    <!-- DATA DOSEN -->
 
-    <table>
+    <script src="js/dataBahanAjar.js"></script>
 
-        <thead>
-            <tr>
-                <th>Kode</th>
-                <th>Judul</th>
-                <th>Kategori</th>
-                <th>UPBJJ</th>
-                <th>Rak</th>
-                <th>Harga</th>
-                <th>Qty</th>
-                <th>Safety</th>
-                <th>Status</th>
-                <th>Catatan</th>
-            </tr>
-        </thead>
+    <!-- VUE APP -->
 
-        <tbody>
+    <script>
 
-            <tr
-                v-for="(item,index) in filteredStok"
-                :key="index">
+        new Vue({
 
-                <td>{{ item.kode }}</td>
+            el:'#mainApp',
 
-                <td v-text="item.judul"></td>
+            data: {
 
-                <td>{{ item.kategori }}</td>
+                stok: app.$data.stok,
 
-                <td>{{ item.upbjj }}</td>
+                upbjjList:
+                    app.$data.upbjjList,
 
-                <td>{{ item.lokasiRak }}</td>
+                kategoriList:
+                    app.$data.kategoriList,
 
-                <td>
-                    Rp {{ item.harga.toLocaleString() }}
-                </td>
+                selectedUPBJJ:'',
 
-                <td>
-                    <input
-                        type="number"
-                        v-model="item.qty">
-                </td>
+                selectedKategori:'',
 
-                <td>{{ item.safety }}</td>
+                onlyWarning:false,
 
-                <td>
+                sortBy:'',
 
-                    <span
-                        v-if="item.qty == 0"
-                        class="danger">
+                form: {
 
-                        ❌ Kosong
-                    </span>
+                    kode:'',
+                    judul:'',
+                    kategori:'',
+                    upbjj:'',
+                    harga:'',
+                    qty:'',
+                    safety:''
 
-                    <span
-                        v-else-if="item.qty < item.safety"
-                        class="warning">
+                }
 
-                        ⚠ Menipis
-                    </span>
+            },
 
-                    <span
-                        v-else
-                        class="safe">
+            computed: {
 
-                        ✅ Aman
-                    </span>
+                filteredStok(){
 
-                </td>
+                    let data = [...this.stok]
 
-                <td v-html="item.catatanHTML"></td>
+                    if(this.selectedUPBJJ){
 
-            </tr>
+                        data = data.filter(
+                            item =>
+                            item.upbjj ==
+                            this.selectedUPBJJ
+                        )
 
-        </tbody>
+                    }
 
-    </table>
+                    if(this.selectedKategori){
 
-    <!-- FORM -->
+                        data = data.filter(
+                            item =>
+                            item.kategori ==
+                            this.selectedKategori
+                        )
 
-    <div class="form-box">
+                    }
 
-        <h2>➕ Tambah Bahan Ajar</h2>
+                    if(this.onlyWarning){
 
-        <input
-            type="text"
-            placeholder="Kode"
-            v-model="form.kode">
+                        data = data.filter(
+                            item =>
+                            item.qty <
+                            item.safety
+                        )
 
-        <input
-            type="text"
-            placeholder="Judul"
-            v-model="form.judul">
+                    }
 
-        <select v-model="form.kategori">
-            <option value="">Pilih Kategori</option>
+                    if(this.sortBy == 'judul'){
 
-            <option
-                v-for="k in kategoriList"
-                :value="k">
+                        data.sort((a,b)=>
+                            a.judul.localeCompare(
+                                b.judul
+                            )
+                        )
 
-                {{ k }}
-            </option>
-        </select>
+                    }
 
-        <select v-model="form.upbjj">
+                    if(this.sortBy == 'qty'){
 
-            <option value="">Pilih UPBJJ</option>
+                        data.sort((a,b)=>
+                            a.qty - b.qty
+                        )
 
-            <option
-                v-for="u in upbjjList"
-                :value="u">
+                    }
 
-                {{ u }}
-            </option>
+                    if(this.sortBy == 'harga'){
 
-        </select>
+                        data.sort((a,b)=>
+                            a.harga - b.harga
+                        )
 
-        <input
-            type="number"
-            placeholder="Harga"
-            v-model="form.harga">
+                    }
 
-        <input
-            type="number"
-            placeholder="Qty"
-            v-model="form.qty">
+                    return data
 
-        <input
-            type="number"
-            placeholder="Safety"
-            v-model="form.safety">
+                }
 
-        <button @click="addData">
-            Simpan
-        </button>
+            },
 
-    </div>
+            methods: {
 
-</div>
+                resetFilter(){
 
-<script src="js/dataBahanAjar.js"></script>
-<script src="js/stok-app.js"></script>
+                    this.selectedUPBJJ = ''
+
+                    this.selectedKategori = ''
+
+                    this.onlyWarning = false
+
+                    this.sortBy = ''
+
+                },
+
+                addData(){
+
+                    if(
+
+                        !this.form.kode ||
+                        !this.form.judul ||
+                        !this.form.kategori ||
+                        !this.form.upbjj ||
+                        !this.form.harga ||
+                        !this.form.qty ||
+                        !this.form.safety
+
+                    ){
+
+                        alert(
+                            "Semua field wajib diisi"
+                        )
+
+                        return
+
+                    }
+
+                    this.stok.push({
+
+                        kode:this.form.kode,
+
+                        judul:this.form.judul,
+
+                        kategori:this.form.kategori,
+
+                        upbjj:this.form.upbjj,
+
+                        lokasiRak:"RAK-BARU",
+
+                        harga:
+                            Number(this.form.harga),
+
+                        qty:
+                            Number(this.form.qty),
+
+                        safety:
+                            Number(this.form.safety),
+
+                        catatanHTML:
+                            "<i>Data Baru</i>"
+
+                    })
+
+                    alert(
+                        "Data berhasil ditambahkan"
+                    )
+
+                    this.form = {
+
+                        kode:'',
+                        judul:'',
+                        kategori:'',
+                        upbjj:'',
+                        harga:'',
+                        qty:'',
+                        safety:''
+
+                    }
+
+                }
+
+            },
+
+            watch: {
+
+                selectedUPBJJ(value){
+
+                    console.log(
+                        "UPBJJ berubah:",
+                        value
+                    )
+
+                },
+
+                onlyWarning(value){
+
+                    console.log(
+                        "Warning filter:",
+                        value
+                    )
+
+                }
+
+            }
+
+        })
+
+    </script>
 
 </body>
+
 </html>

@@ -1,125 +1,108 @@
-const { createApp } = Vue
+app.$data.deliveryOrders = []
 
-createApp({
+app.$data.selectedPaket = ''
 
-    data(){
+app.$data.form = {
 
-        return {
+    nim:'',
+    nama:'',
+    ekspedisi:'',
+    tanggalKirim:''
 
-            paket: app._data.paket,
+}
 
-            pengirimanList:
-                app._data.pengirimanList,
+app.$options.computed = {
 
-            deliveryOrders: [],
+    generatedDO(){
 
-            selectedPaket:'',
+        let nomor =
+            this.deliveryOrders.length + 1
 
-            form: {
+        let tahun =
+            new Date().getFullYear()
 
-                nim:'',
-                nama:'',
-                ekspedisi:'',
-                tanggalKirim:''
-
-            }
-
-        }
-
+        return `DO${tahun}-${String(nomor).padStart(3,'0')}`
     },
 
-    computed: {
+    paketDetail(){
 
-        generatedDO(){
+        return this.paket.find(
+            p =>
+            p.kode == this.selectedPaket
+        )
+    }
 
-            let nomor =
-                this.deliveryOrders.length + 1
+}
 
-            let tahun =
-                new Date().getFullYear()
+app.$options.methods = {
 
-            return `DO${tahun}-${String(nomor).padStart(3,'0')}`
-        },
+    addTracking(){
 
-        paketDetail(){
+        if(
+            !this.form.nim ||
+            !this.form.nama ||
+            !this.selectedPaket
+        ){
 
-            return this.paket.find(
-                p =>
-                p.kode == this.selectedPaket
-            )
+            alert("Lengkapi data")
+            return
         }
 
-    },
+        this.deliveryOrders.push({
 
-    methods: {
+            nomorDO: this.generatedDO,
 
-        addTracking(){
+            nim: this.form.nim,
 
-            if(
-                !this.form.nim ||
-                !this.form.nama ||
-                !this.selectedPaket
-            ){
+            nama: this.form.nama,
 
-                alert("Lengkapi data")
-                return
-            }
+            ekspedisi: this.form.ekspedisi,
 
-            this.deliveryOrders.push({
+            paket: this.selectedPaket,
 
-                nomorDO: this.generatedDO,
+            tanggalKirim:
+                this.form.tanggalKirim,
 
-                nim: this.form.nim,
+            total:
+                this.paketDetail.harga
 
-                nama: this.form.nama,
+        })
 
-                ekspedisi: this.form.ekspedisi,
+        alert("DO berhasil dibuat")
 
-                paket: this.selectedPaket,
+        this.form = {
 
-                tanggalKirim:
-                    this.form.tanggalKirim,
-
-                total:
-                    this.paketDetail.harga
-
-            })
-
-            alert("DO berhasil dibuat")
-
-            this.form = {
-
-                nim:'',
-                nama:'',
-                ekspedisi:'',
-                tanggalKirim:''
-
-            }
-
-            this.selectedPaket = ''
+            nim:'',
+            nama:'',
+            ekspedisi:'',
+            tanggalKirim:''
 
         }
 
-    },
-
-    watch: {
-
-        selectedPaket(value){
-
-            console.log(
-                "Paket dipilih:",
-                value
-            )
-        },
-
-        'form.nama'(value){
-
-            console.log(
-                "Nama berubah:",
-                value
-            )
-        }
+        this.selectedPaket = ''
 
     }
 
-}).mount('#app')
+}
+
+app.$options.watch = {
+
+    selectedPaket(value){
+
+        console.log(
+            "Paket dipilih:",
+            value
+        )
+    },
+
+    'form.nama'(value){
+
+        console.log(
+            "Nama berubah:",
+            value
+        )
+    }
+
+}
+
+app._init()

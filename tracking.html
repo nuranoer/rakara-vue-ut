@@ -1,156 +1,412 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
 
-    <title>Tracking DO</title>
+    <title>RAKARA - Tracking Delivery Order</title>
 
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="css/style.css">
+
 </head>
+
 <body>
 
-<div id="app" class="container">
+    <!-- APP DUMMY DOSEN -->
 
-    <h1>🚚 Tracking Delivery Order</h1>
+    <div id="app" style="display:none;"></div>
 
-    <!-- FORM -->
+    <!-- APP UTAMA -->
 
-    <div class="form-box">
+    <div id="mainApp" class="container">
 
-        <h2>Tambah Delivery Order</h2>
+        <h1>🚚 Tracking Delivery Order</h1>
 
-        <p>
-            Nomor DO:
-            <strong>{{ generatedDO }}</strong>
-        </p>
+        <!-- FORM -->
 
-        <input
-            type="text"
-            placeholder="NIM"
-            v-model="form.nim">
+        <div class="form-box">
 
-        <input
-            type="text"
-            placeholder="Nama"
-            v-model="form.nama">
+            <h2>➕ Tambah Delivery Order</h2>
 
-        <select v-model="form.ekspedisi">
-
-            <option value="">
-                Pilih Ekspedisi
-            </option>
-
-            <option
-                v-for="e in pengirimanList"
-                :value="e.nama">
-
-                {{ e.nama }}
-            </option>
-
-        </select>
-
-        <select v-model="selectedPaket">
-
-            <option value="">
-                Pilih Paket
-            </option>
-
-            <option
-                v-for="p in paket"
-                :value="p.kode">
-
-                {{ p.kode }} - {{ p.nama }}
-            </option>
-
-        </select>
-
-        <!-- DETAIL PAKET -->
-
-        <div
-            v-if="paketDetail"
-            class="detail-box">
-
-            <h3>Isi Paket</h3>
-
-            <ul>
-
-                <li
-                    v-for="isi in paketDetail.isi">
-
-                    {{ isi }}
-                </li>
-
-            </ul>
+            <!-- NOMOR DO -->
 
             <p>
-                Total Harga:
-                Rp {{ paketDetail.harga.toLocaleString() }}
+
+                Nomor DO :
+
+                <strong>
+
+                    {{ generatedDO }}
+
+                </strong>
+
             </p>
+
+            <!-- NIM -->
+
+            <input
+                type="text"
+                placeholder="Masukkan NIM"
+                v-model="form.nim">
+
+            <!-- NAMA -->
+
+            <input
+                type="text"
+                placeholder="Masukkan Nama"
+                v-model="form.nama">
+
+            <!-- EKSPEDISI -->
+
+            <select v-model="form.ekspedisi">
+
+                <option value="">
+                    Pilih Ekspedisi
+                </option>
+
+                <option
+                    v-for="e in pengirimanList"
+                    :key="e.kode"
+                    :value="e.nama">
+
+                    {{ e.nama }}
+
+                </option>
+
+            </select>
+
+            <!-- PAKET -->
+
+            <select v-model="selectedPaket">
+
+                <option value="">
+                    Pilih Paket
+                </option>
+
+                <option
+                    v-for="p in paket"
+                    :key="p.kode"
+                    :value="p.kode">
+
+                    {{ p.kode }} - {{ p.nama }}
+
+                </option>
+
+            </select>
+
+            <!-- DETAIL PAKET -->
+
+            <div
+                v-if="paketDetail"
+                class="detail-box">
+
+                <h3>📦 Detail Paket</h3>
+
+                <ul>
+
+                    <li
+                        v-for="(isi,index) in paketDetail.isi"
+                        :key="index">
+
+                        {{ isi }}
+
+                    </li>
+
+                </ul>
+
+                <p>
+
+                    <strong>
+
+                        Total Harga :
+
+                        Rp {{ paketDetail.harga.toLocaleString() }}
+
+                    </strong>
+
+                </p>
+
+            </div>
+
+            <!-- TANGGAL -->
+
+            <input
+                type="date"
+                v-model="form.tanggalKirim">
+
+            <!-- BUTTON -->
+
+            <button @click="addTracking">
+
+                Simpan Delivery Order
+
+            </button>
 
         </div>
 
-        <input
-            type="date"
-            v-model="form.tanggalKirim">
+        <!-- TABLE -->
 
-        <button @click="addTracking">
-            Simpan DO
-        </button>
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No DO</th>
+                    <th>NIM</th>
+                    <th>Nama</th>
+                    <th>Ekspedisi</th>
+                    <th>Paket</th>
+                    <th>Tanggal Kirim</th>
+                    <th>Total Harga</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr
+                    v-for="(item,index) in deliveryOrders"
+                    :key="index">
+
+                    <td>
+
+                        {{ item.nomorDO }}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.nim }}
+
+                    </td>
+
+                    <td v-text="item.nama"></td>
+
+                    <td>
+
+                        {{ item.ekspedisi }}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.paket }}
+
+                    </td>
+
+                    <td>
+
+                        {{ item.tanggalKirim }}
+
+                    </td>
+
+                    <td>
+
+                        Rp {{ item.total.toLocaleString() }}
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
 
     </div>
 
-    <!-- TABLE -->
+    <!-- DATA DOSEN -->
 
-    <table>
+    <script src="js/dataBahanAjar.js"></script>
 
-        <thead>
+    <!-- VUE APP -->
 
-            <tr>
-                <th>No DO</th>
-                <th>NIM</th>
-                <th>Nama</th>
-                <th>Ekspedisi</th>
-                <th>Paket</th>
-                <th>Tanggal</th>
-                <th>Total</th>
-            </tr>
+    <script>
 
-        </thead>
+        new Vue({
 
-        <tbody>
+            el:'#mainApp',
 
-            <tr
-                v-for="(item,index) in deliveryOrders"
-                :key="index">
+            data: {
 
-                <td>{{ item.nomorDO }}</td>
+                paket:
+                    app.$data.paket,
 
-                <td>{{ item.nim }}</td>
+                pengirimanList:
+                    app.$data.pengirimanList,
 
-                <td>{{ item.nama }}</td>
+                deliveryOrders: Object.keys(app.$data.tracking).map(key => ({
 
-                <td>{{ item.ekspedisi }}</td>
+                nomorDO: key,
 
-                <td>{{ item.paket }}</td>
+                nim: app.$data.tracking[key].nim,
 
-                <td>{{ item.tanggalKirim }}</td>
+                nama: app.$data.tracking[key].nama,
 
-                <td>
-                    Rp {{ item.total.toLocaleString() }}
-                </td>
+                ekspedisi: app.$data.tracking[key].ekspedisi,
 
-            </tr>
+                paket: app.$data.tracking[key].paket,
 
-        </tbody>
+                tanggalKirim: app.$data.tracking[key].tanggalKirim,
 
-    </table>
+                total: app.$data.tracking[key].total
 
-</div>
+            })),
 
-<script src="js/dataBahanAjar.js"></script>
-<script src="js/tracking-app.js"></script>
+                selectedPaket:'',
+
+                form: {
+
+                    nim:'',
+
+                    nama:'',
+
+                    ekspedisi:'',
+
+                    tanggalKirim:''
+
+                }
+
+            },
+
+            computed: {
+
+                // GENERATE NOMOR DO
+
+                generatedDO(){
+
+                    let nomor =
+                        this.deliveryOrders.length + 1
+
+                    let tahun =
+                        new Date().getFullYear()
+
+                    return `DO${tahun}-${String(nomor).padStart(3,'0')}`
+
+                },
+
+                // DETAIL PAKET
+
+                paketDetail(){
+
+                    return this.paket.find(
+
+                        p =>
+                        p.kode ==
+                        this.selectedPaket
+
+                    )
+
+                }
+
+            },
+
+            methods: {
+
+                // TAMBAH TRACKING
+
+                addTracking(){
+
+                    if(
+
+                        !this.form.nim ||
+                        !this.form.nama ||
+                        !this.form.ekspedisi ||
+                        !this.selectedPaket ||
+                        !this.form.tanggalKirim
+
+                    ){
+
+                        alert(
+                            "Semua field wajib diisi"
+                        )
+
+                        return
+
+                    }
+
+                    this.deliveryOrders.push({
+
+                        nomorDO:
+                            this.generatedDO,
+
+                        nim:
+                            this.form.nim,
+
+                        nama:
+                            this.form.nama,
+
+                        ekspedisi:
+                            this.form.ekspedisi,
+
+                        paket:
+                            this.selectedPaket,
+
+                        tanggalKirim:
+                            this.form.tanggalKirim,
+
+                        total:
+                            this.paketDetail.harga
+
+                    })
+
+                    alert(
+                        "Delivery Order berhasil dibuat"
+                    )
+
+                    // RESET FORM
+
+                    this.form = {
+
+                        nim:'',
+                        nama:'',
+                        ekspedisi:'',
+                        tanggalKirim:''
+
+                    }
+
+                    this.selectedPaket = ''
+
+                }
+
+            },
+
+            watch: {
+
+                // WATCHER 1
+
+                selectedPaket(value){
+
+                    console.log(
+                        "Paket dipilih:",
+                        value
+                    )
+
+                },
+
+                // WATCHER 2
+
+                'form.nama'(value){
+
+                    console.log(
+                        "Nama berubah:",
+                        value
+                    )
+
+                }
+
+            }
+
+        })
+
+    </script>
 
 </body>
+
 </html>

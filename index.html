@@ -1,70 +1,257 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>RAKARA - Sistem Bahan Ajar UT</title>
 
     <link rel="stylesheet" href="css/style.css">
 
     <style>
-        body{
-            font-family: Arial;
-            background:#f4f6f9;
-            padding:40px;
-            text-align:center;
+
+        *{
+
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+
         }
+
+        body{
+
+            font-family: Arial, sans-serif;
+
+            min-height:100vh;
+
+            display:flex;
+
+            flex-direction:column;
+
+            justify-content:center;
+
+            align-items:center;
+
+            padding:40px;
+
+            text-align:center;
+
+            /* BACKGROUND MODERN */
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37,99,235,0.2),
+                    rgba(139,92,246,0.2)
+                ),
+                url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=1974&auto=format&fit=crop');
+
+            background-size:cover;
+
+            background-position:center;
+
+            backdrop-filter: blur(10px);
+
+        }
+
+        h1{
+
+            font-size:52px;
+
+            color:white;
+
+            margin-bottom:10px;
+
+            text-shadow:0 2px 10px rgba(0,0,0,.3);
+
+        }
+
+        h3{
+
+            color:white;
+
+            font-weight:normal;
+
+            margin-bottom:50px;
+
+            text-shadow:0 2px 10px rgba(0,0,0,.3);
+
+        }
+
+        /* MENU */
 
         .menu{
-            margin-top:40px;
+
+            display:flex;
+
+            gap:30px;
+
+            flex-wrap:wrap;
+
+            justify-content:center;
+
         }
+
+        /* GLASSMORPHISM CARD */
 
         .card{
-            width:300px;
-            display:inline-block;
-            background:white;
+
+            width:320px;
+
+            min-height:280px;
+
             padding:30px;
-            margin:20px;
-            border-radius:12px;
-            box-shadow:0 2px 10px rgba(0,0,0,.1);
+
+            border-radius:24px;
+
+            background:rgba(255,255,255,0.15);
+
+            border:1px solid rgba(255,255,255,0.2);
+
+            backdrop-filter: blur(15px);
+
+            -webkit-backdrop-filter: blur(15px);
+
+            box-shadow:
+                0 8px 32px rgba(0,0,0,0.2);
+
+            display:flex;
+
+            flex-direction:column;
+
+            justify-content:space-between;
+
+            transition:.3s;
+
         }
 
-        a{
-            text-decoration:none;
-            color:white;
-            background:#2563eb;
-            padding:12px 20px;
-            border-radius:8px;
-            display:inline-block;
-            margin-top:20px;
+        .card:hover{
+
+            transform:translateY(-8px);
+
+            box-shadow:
+                0 12px 40px rgba(0,0,0,.25);
+
         }
+
+        .card h2{
+
+            color:white;
+
+            margin-bottom:20px;
+
+        }
+
+        .card p{
+
+            color:#f1f5f9;
+
+            line-height:1.6;
+
+            margin-bottom:30px;
+
+        }
+
+        /* BUTTON */
+
+        a{
+
+            text-decoration:none;
+
+            background:white;
+
+            color:#2563eb;
+
+            padding:14px 24px;
+
+            border-radius:12px;
+
+            font-weight:bold;
+
+            transition:.3s;
+
+            display:inline-block;
+
+        }
+
+        a:hover{
+
+            background:#2563eb;
+
+            color:white;
+
+        }
+
     </style>
+
 </head>
+
 <body>
 
     <h1>📚 RAKARA</h1>
-    <h3>Sistem Distribusi Bahan Ajar Universitas Terbuka</h3>
+
+    <h3>
+        Sistem Distribusi Bahan Ajar Universitas Terbuka
+    </h3>
 
     <div class="menu">
 
+        <!-- CARD 1 -->
+
         <div class="card">
-            <h2>📦 Stok Bahan Ajar</h2>
-            <p>Kelola stok dan monitoring safety stock.</p>
+
+            <div>
+
+                <h2>📦 Stok Bahan Ajar</h2>
+
+                <p>
+
+                    Kelola stok bahan ajar,
+                    monitoring safety stock,
+                    dan filter data stok
+                    secara interaktif.
+
+                </p>
+
+            </div>
 
             <a href="stok.html">
+
                 Buka Halaman
+
             </a>
+
         </div>
 
+        <!-- CARD 2 -->
+
         <div class="card">
-            <h2>🚚 Tracking Delivery Order</h2>
-            <p>Pantau pengiriman bahan ajar mahasiswa.</p>
+
+            <div>
+
+                <h2>🚚 Tracking Delivery Order</h2>
+
+                <p>
+
+                    Pantau proses pengiriman
+                    bahan ajar mahasiswa
+                    dengan tampilan modern.
+
+                </p>
+
+            </div>
 
             <a href="tracking.html">
+
                 Buka Halaman
+
             </a>
+
         </div>
 
     </div>
 
 </body>
+
 </html>
